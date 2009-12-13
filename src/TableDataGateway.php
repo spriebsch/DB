@@ -101,6 +101,7 @@ class TableDataGateway
      * Returns the PDO data type for given column.
      *
      * @param string $column DB column name
+     * @return int PDO column type
      */	
 	protected function getType($column)
 	{
@@ -186,12 +187,12 @@ class TableDataGateway
 	}
 
     /**
-     * Run a select statement.
+     * Runs a select statement.
+     * Returns a single record or an array of records, depending on $justOne flag.
      *   
-     * @param array $criteria
-     * @param bool $justOne Only return first result record when set  
+     * @param array $criteria Associative array with column => criterion entries
+     * @param bool $justOne Returns only first result record when set  
      * @return array
-     * @todo cache it anyway (map of cached statements?) -> generic statement cache?
      */
     public function select(array $criteria, $justOne = false)
     {
@@ -221,8 +222,8 @@ class TableDataGateway
     }
 
     /**
-     * Select one record.
-     * In case of multiple result rows, 
+     * Runs select statement and returns first result record.
+     *
      * @param array $criteria
      * @return array
      */
@@ -233,9 +234,10 @@ class TableDataGateway
 
     /**
      * Updates a row.
+     * Returns the number of updated records.
      *
-     * @param array $record
-     * @return bool
+     * @param array $record Associative array with column => value entries
+     * @return int
      *
      * @throws InvalidArgumentException Record has no ID column
      * @throws InvalidArgumentException ID is not an integer
@@ -274,16 +276,18 @@ class TableDataGateway
             throw new DatabaseException('Update ID "' . $record[$this->idColumn] . '" failed on table "' . $this->table . '": ' . $message[2]);
         }        
 
-        return $statement->rowCount() == 1;
+        return $statement->rowCount();
 	}
 
 	/**
-	 * Insert new row into table.
-     * Returns the ID of the inserted record.
+	 * Inserts row.
+     * Returns ID of the inserted record.
 	 *
 	 * @param array $record Associative array with column => value entries
-	 * @return int ID of the inserted record
-	 * @exception when col not configured, or fallback to default cast?
+	 * @return bool
+	 * 
+	 * @throws InvalidArgumentException Record to insert already has an ID
+	 * @throws spriebsch\DB\DatabaseException Insert failed on table
 	 */
 	public function insert(array $record)
 	{
@@ -312,16 +316,7 @@ class TableDataGateway
         return $this->db->lastInsertId();
 	}
 
-	/**
-	 * Deletes a record.
-	 * Returns a boolean value.
-	 * 
-	 * @param int $id ID of the row to delete
-	 * @return bool
-     *
-     * @throws InvalidArgumentException ID is not an integer
-     * @throws spriebsch\DB\DatabaseException Delete ID failed on table
-	 */    /**
+    /**
      * Returns all records in the table.
      *
      * @return array
@@ -346,6 +341,9 @@ class TableDataGateway
      *
      * @param int $id ID of the record to delete
      * @return bool
+     *
+	 * @throws InvalidArgumentException ID is not an integer
+     * @throws spriebsch\DB\DatabaseException Delete ID failed on table
      */
 	public function delete($id)
 	{

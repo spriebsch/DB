@@ -92,7 +92,7 @@ class TableDataGatewayUpdateTest extends TableDataGatewayTestBase
     {
         $result = $this->gw->update(array('id' => 1, 'col1' => 'new', 'col2' => 3));
 
-        $this->assertTrue($result);
+        $this->assertEquals(1, $result);
     }    
 
 	/**
@@ -104,7 +104,7 @@ class TableDataGatewayUpdateTest extends TableDataGatewayTestBase
     {
         $result = $this->gw->update(array('id' => 99, 'col1' => 'new', 'col2' => 3));
 
-        $this->assertFalse($result);
+        $this->assertEquals(0, $result);
     }
 }
 ?>
