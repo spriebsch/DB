@@ -102,7 +102,7 @@ class TableDataGatewayFactory
         }
 
         if (!isset($this->gateways[$table])) {
-            $this->gateways[$table] = new TableDataGateway($this->db, $table, $this->dbTypes[$table], $this->idColumns[$table]);
+            $this->gateways[$table] = new TableDataGateway($this->db, $table, $this->idColumns[$table], $this->dbTypes[$table]);
         }
 
         return $this->gateways[$table];

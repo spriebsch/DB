@@ -89,7 +89,7 @@ class TableDataGateway
      * @param array $dbTypes
      * @param string $idColumn DB column name containing the primary key
      */
-    public function __construct(DatabaseHandler $db, $table, $idColumn, $dbTypes)
+    public function __construct(DatabaseHandler $db, $table, $idColumn, array $dbTypes)
 	{
         $this->db       = $db;
         $this->table    = $table;
