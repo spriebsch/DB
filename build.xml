@@ -1,6 +1,7 @@
 <project name="DB" default="build" basedir=".">
 
     <property name="src"      location="src"/>
+    <property name="tests"    location="tests"/>
 
     <property name="build"    location="_build"/>
     <property name="docs"     location="_docs"/>
@@ -18,9 +19,14 @@
             <arg value="${src}"/>
             <arg value="${src}/Autoload.php"/>
         </exec>
+        <exec executable="php" failonerror="true">
+            <arg value="scripts/autoload.php"/>
+            <arg value="${tests}"/>
+            <arg value="${tests}/Autoload.php"/>
+        </exec>
     </target>
 
-    <target name="test" depends="init">
+    <target name="test" depends="init, autoload">
         <exec executable="phpunit" failonerror="true"/>
     </target>
 

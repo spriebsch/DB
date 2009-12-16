@@ -42,8 +42,9 @@ namespace spriebsch\DB;
  *
  * @author Stefan Priebsch <stefan@priebsch.de>
  * @copyright Stefan Priebsch <stefan@priebsch.de>. All rights reserved.
+ * @todo a readonly recordset?
  */
-class RecordSet
+class RecordSet implements \Countable
 {
     /**
      * @var int
@@ -82,6 +83,35 @@ class RecordSet
 	   foreach ($records as $record) {
             $this->records[$record[$this->idColumn]] = $record;	       
 	   }
+	}
+	
+	/**
+	 * Returns the number of records in the recordset.
+	 * 
+	 * @return int
+	 */
+	public function count()
+	{
+        return count($this->records);
+	}
+
+	/**
+	 * Returns ID of (first) record matching given criteria.
+	 * Criteria is an associative array of the form array('column' => 'value', ...).
+	 * Returns NULL if no matching record is found. 
+	 * 
+	 * @param array $criteria
+	 * @return int
+	 */
+	public function find($criteria)
+	{
+        foreach ($this->records as $id => $record) {
+            if (array_diff($criteria, $record) == array()) {
+                return $id;
+            }
+        }
+        
+        return null;
 	}
 
 	/**

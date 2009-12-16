@@ -164,5 +164,20 @@ class RecordSetTest extends PHPUnit_Framework_TestCase
 
         $this->assertEquals(array('id' => 99, 'key' => 'new'), $this->rs->get(99));
     }
+    
+    public function testCountReturnsNumberOfRecords()
+    {
+        $this->assertEquals(2, count($this->rs));
+    }
+    
+    public function testFindReturnsIdOfFirstMatchingRecord()
+    {
+        $this->assertEquals(2, $this->rs->find(array('key' => 42)));
+    }
+
+    public function testFindReturnsNullWhenNoMatchingRecordIsFound()
+    {
+        $this->assertNull($this->rs->find(array('key' => 'nonsense')));
+    }
 }
 ?>

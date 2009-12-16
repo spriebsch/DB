@@ -37,8 +37,6 @@
 
 namespace spriebsch\DB;
 
-require_once __DIR__ . '/TableDataGatewayTestBase.php';
-
 /**
  * Unit Tests for the Database Data Gateway.
  *

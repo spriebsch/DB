@@ -37,6 +37,8 @@
 
 namespace spriebsch\DB;
 
+use PDO;
+
 /**
  * Table Data Gateway class.
  *
@@ -95,6 +97,37 @@ class TableDataGateway
         $this->table    = $table;
         $this->idColumn = $idColumn;
         $this->dbTypes  = $dbTypes;
+	}
+
+    protected function fixTypes($record)
+    {
+        $result = array();
+         
+        foreach ($record as $column => $value) {
+            $result[$column] = $this->typeCast($column, $value);
+        }
+        
+        return $result;
+    }
+	
+	protected function typeCast($column, $value)
+	{
+        if (!isset($this->dbTypes[$column])) {
+            return $value;
+        }
+        
+        switch ($this->dbTypes[$column]) {
+            case PDO::PARAM_BOOL:
+                return (bool) $value;
+            break;
+
+            case PDO::PARAM_INT:
+                return (int) $value;
+            break;
+            
+            default:
+                 return $value;
+        }
 	}
 
     /**
@@ -192,8 +225,8 @@ class TableDataGateway
         if ($result === false) {
         	throw new DatabaseException('Record ID "' . $id . '" not found');
         }
-        
-        return $result;
+
+        return new RecordSet($this, array($this->fixTypes($result)));        
 	}
 
     /**
@@ -225,9 +258,9 @@ class TableDataGateway
         }
         
         if ($justOne) {
-            return $statement->fetch(\PDO::FETCH_ASSOC);
+            return new RecordSet($this, array($this->fixTypes($statement->fetch(\PDO::FETCH_ASSOC))));        
         } else {
-            return $statement->fetchAll(\PDO::FETCH_ASSOC);
+            return new RecordSet($this, array_map(array($this, 'fixTypes'), $statement->fetchAll(\PDO::FETCH_ASSOC)));
         }
     }
 
@@ -341,9 +374,9 @@ class TableDataGateway
         if ($statement->errorCode() != 0) {
             $message = $statement->errorInfo();
             throw new DatabaseException('FindAll failed on table "' . $this->table . '": ' . $message[2]);
-        }        
+        }
 
-        return $statement->fetchAll(\PDO::FETCH_ASSOC);        
+        return new RecordSet($this, array_map(array($this, 'fixTypes'), $statement->fetchAll(\PDO::FETCH_ASSOC)));        
     }
 
     /**

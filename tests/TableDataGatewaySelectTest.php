@@ -37,7 +37,7 @@
 
 namespace spriebsch\DB;
 
-require_once __DIR__ . '/TableDataGatewayTestBase.php';
+use PHPUnit_Framework_Constraint_IsType;
 
 /**
  * Unit Tests for the select functionality of TableDataGateway.
@@ -55,17 +55,10 @@ class TableDataGatewaySelectTest extends TableDataGatewayTestBase
     {
         $result = $this->gw->select(array('col1' => 'text3'));
 
-        $this->assertEquals(3, sizeof($result));
-    }
-
-    /**
-	 * @covers spriebsch\DB\TableDataGateway
-     */
-    public function testSelectReturnsFirstResultRecords()
-    {
-        $result = $this->gw->select(array('col1' => 'text3'), true);
-
-        $this->assertEquals(3, $result['id']);
+        $this->assertEquals(3, count($result));
+        $this->assertEquals(44, $result->get(3, 'col2'));
+        $this->assertEquals(45, $result->get(4, 'col2'));
+        $this->assertEquals(46, $result->get(5, 'col2'));
     }
 
     /**
@@ -75,7 +68,28 @@ class TableDataGatewaySelectTest extends TableDataGatewayTestBase
     {
         $result = $this->gw->selectOne(array('col1' => 'text3'));
 
-        $this->assertEquals(3, $result['id']);
+        $this->assertEquals(1, count($result));
+        $this->assertEquals(44, $result->get(3, 'col2'));
+    }
+
+    /**
+     * @covers spriebsch\DB\TableDataGateway
+     */
+    public function testGatewayReturnsIntegerValues()
+    {
+        $result = $this->gw->selectOne(array('col1' => 'text3'));
+
+        $this->assertType(PHPUnit_Framework_Constraint_IsType::TYPE_INT, $result->get(3, 'col2'));
+    }
+
+    /**
+     * @covers spriebsch\DB\TableDataGateway
+     */
+    public function testGatewayReturnsBooleanValues()
+    {
+        $result = $this->gw->selectOne(array('col1' => 'text3'));
+
+        $this->assertType(PHPUnit_Framework_Constraint_IsType::TYPE_BOOL, $result->get(3, 'col3'));
     }
 }
 ?>

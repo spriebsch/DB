@@ -79,21 +79,8 @@ class TableDataGatewayFindTest extends TableDataGatewayTestBase
     {
         $result = $this->gw->find(1);
         
-        $this->assertTrue(is_array($result));
-        $this->assertEquals(1, $result['id']);
-    }
-
-	/**
-	 * Make sure find() returns a record.
-	 *
-	 * @covers spriebsch\DB\TableDataGateway
-	 */
-    public function testFind()
-    {
-        $result = $this->gw->find(1);
-
-        $this->assertTrue(is_array($result));
-        $this->assertEquals(1, $result['id']);
+        $this->assertTrue($result instanceOf RecordSet);
+        $this->assertEquals(1, $result->get(1, 'id'));
     }
 
 	/**

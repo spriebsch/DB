@@ -37,6 +37,8 @@
 
 namespace spriebsch\DB;
 
+use PDO;
+
 /**
  * Base class for table data gateway unit tests.
  *
@@ -51,9 +53,10 @@ abstract class TableDataGatewayTestBase extends \PHPUnit_Framework_TestCase
      * Mapping for col99 deliberately left out.
      */
     protected $types = array(
-        'id'   => \PDO::PARAM_INT,
-        'col1' => \PDO::PARAM_STR,
-        'col2' => \PDO::PARAM_INT, 
+        'id'   => PDO::PARAM_INT,
+        'col1' => PDO::PARAM_STR,
+        'col2' => PDO::PARAM_INT, 
+        'col3' => PDO::PARAM_BOOL, 
     );
 
     /**
