@@ -37,33 +37,15 @@
 
 namespace spriebsch\DB;
 
-require_once __DIR__ . '/TableDataGatewayTestBase.php';
+use Exception;
 
 /**
- * Unit Tests for the Database Data Gateway.
+ * RecordSetException
  *
- * @author     Stefan Priebsch <stefan@priebsch.de>
- * @copyright  Stefan Priebsch <stefan@priebsch.de>. All rights reserved.
- * @todo test float, blob, and bool
+ * @author Stefan Priebsch <stefan@priebsch.de>
+ * @copyright Stefan Priebsch <stefan@priebsch.de>. All rights reserved.
  */
-class TableDataGatewayTest extends TableDataGatewayTestBase
+class RecordSetException extends Exception
 {
-	/**
-	 * Pointless test to achieve constructor coverage.
-	 *
-	 * @covers spriebsch\DB\TableDataGateway::__construct
-	 */
-    public function testConstructorCreatesTheObject()
-    {
-        $this->assertTrue($this->gw instanceOf TableDataGateway);
-    }
-
-    /**
-     * @covers spriebsch\DB\TableDataGateway::getIdColumn
-     */
-    public function testGetIdColumnReturnsIdColumn()
-    {
-        $this->assertEquals('id', $this->gw->getIdColumn());
-    }
 }
 ?>

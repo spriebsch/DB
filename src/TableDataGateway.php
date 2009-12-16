@@ -149,6 +149,16 @@ class TableDataGateway
             $statement->bindValue(':' . $key, $value, $this->getType($key));
         }
 	}
+	
+    /**
+     * Returns the ID column.
+     * 
+     * @return string
+     */
+	public function getIdColumn()
+	{
+	   return $this->idColumn;
+	}
 
     /**
      * Returns a record by ID.
