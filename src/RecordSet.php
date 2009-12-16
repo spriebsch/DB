@@ -45,10 +45,19 @@ namespace spriebsch\DB;
  */
 class RecordSet
 {
+    /**
+     * @var int
+     */
     protected $idColumn = 'id';
 
+    /**
+     * @var array
+     */
     protected $records = array();
 
+    /**
+     * @var spriebsch\DB\TableDataGateway
+     */
     protected $tableDataGateway;
 
     /**
