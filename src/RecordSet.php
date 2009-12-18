@@ -57,6 +57,11 @@ class RecordSet implements \Countable
     protected $records = array();
 
     /**
+     * @var array
+     */
+    protected $dirty = array();
+    
+    /**
      * @var spriebsch\DB\TableDataGateway
      */
     protected $tableDataGateway;
@@ -156,6 +161,7 @@ class RecordSet implements \Countable
      * @param $column Colum name to set
      * @param $value Value to set
      * @return null
+     * @todo make sure that ID is not modified
      */
 	public function set($id, $column, $value)
 	{
@@ -163,7 +169,11 @@ class RecordSet implements \Countable
            throw new RecordSetException('ID "' . $id . '" does not exist');
         }
 
-	    $this->records[$id][$column] = $value;
+        // Only mark as modified if there's an actual change.
+        if ($value != $this->records[$id][$column]) {
+            $this->dirty[] = $id;
+    	    $this->records[$id][$column] = $value;
+        }
 	}
 
     /**
@@ -184,6 +194,20 @@ class RecordSet implements \Countable
 
         $this->records[$id] = $record;
         return $id;
+    }
+    
+    /**
+     * Persists modified records.
+     * 
+     * @return null
+     */
+    public function commit()
+    {
+        $this->dirty = array_unique($this->dirty);
+
+        foreach ($this->dirty as $id) {
+            $this->tableDataGateway->update($this->records[$id]);
+        }
     }
 }
 ?>
