@@ -91,5 +91,31 @@ class TableDataGatewaySelectTest extends TableDataGatewayTestBase
 
         $this->assertType(PHPUnit_Framework_Constraint_IsType::TYPE_BOOL, $result->get(3, 'col3'));
     }
+
+    /**
+     * Bug: Empty "selectOne()" query result for causes "Invalid argument supplied for foreach()" 
+     * because fixType() is called with false as parameter. 
+     *
+     * @covers spriebsch\DB\TableDataGateway
+     */
+    public function testBugSelectOneShouldNotCallFixTypesOnEmptyResult()
+    {
+        $result = $this->gw->selectOne(array('col1' => 'nonsense'));
+
+        $this->assertEquals(0, count($result));
+    }
+
+    /**
+     * Make sure "select" query result causes "Invalid argument supplied for foreach()"
+     * because fixType() is called with false as parameter. 
+     *
+     * @covers spriebsch\DB\TableDataGateway
+     */
+    public function testBugSelectShouldNotCallFixTypesOnEmptyResult()
+    {
+        $result = $this->gw->select(array('col1' => 'nonsense'));
+
+        $this->assertEquals(0, count($result));
+    }
 }
 ?>

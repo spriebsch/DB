@@ -258,9 +258,17 @@ class TableDataGateway
         }
         
         if ($justOne) {
-            return new RecordSet($this, array($this->fixTypes($statement->fetch(\PDO::FETCH_ASSOC))));        
+            
+            $result = $statement->fetch(PDO::FETCH_ASSOC);
+
+            // When query has no result, return empty recordset.
+            if ($result === false) {
+                return new RecordSet($this, array());
+            } 
+
+            return new RecordSet($this, array($this->fixTypes($result)));        
         } else {
-            return new RecordSet($this, array_map(array($this, 'fixTypes'), $statement->fetchAll(\PDO::FETCH_ASSOC)));
+            return new RecordSet($this, array_map(array($this, 'fixTypes'), $statement->fetchAll(PDO::FETCH_ASSOC)));
         }
     }
 
