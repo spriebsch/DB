@@ -146,6 +146,25 @@ class TableDataGateway
 	}
 
     /**
+     * Checks whether DB error info indicates a constraint violation and 
+     * throws an exception containing if so.
+     * Trying to detect the violating column is pretty pointless since
+     * there is no decent error message when multiple constraints are violated,
+     * and it's unclear if the error messages are consistent across databases. 
+     *
+     * @param array $message
+     * @return null
+     *
+     * @throws spriebsch\DB\ConstraintViolationException
+     */
+    protected function checkForConstraintViolation($message)
+    {
+        if ($message[0] = 23000) {
+            throw new ConstraintViolationException('Constraint violation on insert into "' . $this->table . '": ' . $message[2]);
+        }
+    }
+
+    /**
      * Prepares and caches a SQL statement.
      *
      * @param string $sql
@@ -324,12 +343,15 @@ class TableDataGateway
 
         if ($statement->errorCode() != 0) {
             $message = $statement->errorInfo();
+
+            $this->checkForConstraintViolation($message);
+
             throw new DatabaseException('Update ID "' . $record[$this->idColumn] . '" failed on table "' . $this->table . '": ' . $message[2]);
         }        
 
         return $statement->rowCount();
 	}
-
+	
 	/**
 	 * Inserts row.
      * Returns ID of the inserted record.
@@ -361,6 +383,9 @@ class TableDataGateway
         
         if ($statement->errorCode() != 0) {
         	$message = $statement->errorInfo();
+        	
+        	$this->checkForConstraintViolation($message);
+
         	throw new DatabaseException('Insert failed on table "' . $this->table . '": ' . $message[2]);
         }        
 
