@@ -38,6 +38,7 @@
 namespace spriebsch\DB;
 
 use PDO;
+use InvalidArgumentException;
 
 /**
  * Table Data Gateway class.
@@ -226,7 +227,7 @@ class TableDataGateway
 	public function find($id)
 	{
         if (!is_int($id)) {
-            throw new \InvalidArgumentException('ID "' . $id . '" is not an integer');
+            throw new InvalidArgumentException('ID "' . $id . '" is not an integer');
         }
 		
         $statement = $this->prepare('SELECT * FROM ' . $this->table . ' WHERE ' . $this->idColumn . '=:' . $this->idColumn . ';');
@@ -316,11 +317,11 @@ class TableDataGateway
 	public function update(array $record)
 	{
         if (!isset($record[$this->idColumn])) {
-            throw new \InvalidArgumentException('Record has no ID column "' . $this->idColumn . '"');
+            throw new InvalidArgumentException('Record has no ID column "' . $this->idColumn . '"');
         }
 
         if (!is_int($record[$this->idColumn])) {
-            throw new \InvalidArgumentException('ID "' . $record[$this->idColumn] . '" is not an integer');
+            throw new InvalidArgumentException('ID "' . $record[$this->idColumn] . '" is not an integer');
         }
 
         $sql = 'UPDATE ' . $this->table . ' SET ';
@@ -424,7 +425,7 @@ class TableDataGateway
 	public function delete($id)
 	{
 		if (!is_int($id)) {
-			throw new \InvalidArgumentException('ID "' . $id . '" is not an integer');
+			throw new InvalidArgumentException('ID "' . $id . '" is not an integer');
 		}
 
         $statement = $this->prepare('DELETE FROM ' . $this->table . ' WHERE ' . $this->idColumn . '=:' . $this->idColumn . ';');
