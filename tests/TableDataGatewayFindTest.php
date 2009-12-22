@@ -79,8 +79,7 @@ class TableDataGatewayFindTest extends TableDataGatewayTestBase
     {
         $result = $this->gw->find(1);
         
-        $this->assertTrue($result instanceOf RecordSet);
-        $this->assertEquals(1, $result->get(1, 'id'));
+        $this->assertEquals(1, $result['id']);
     }
 
 	/**

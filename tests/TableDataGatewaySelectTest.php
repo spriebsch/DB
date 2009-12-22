@@ -56,9 +56,9 @@ class TableDataGatewaySelectTest extends TableDataGatewayTestBase
         $result = $this->gw->select(array('col1' => 'text3'));
 
         $this->assertEquals(3, count($result));
-        $this->assertEquals(44, $result->get(3, 'col2'));
-        $this->assertEquals(45, $result->get(4, 'col2'));
-        $this->assertEquals(46, $result->get(5, 'col2'));
+        $this->assertEquals(44, $result[0]['col2']);
+        $this->assertEquals(45, $result[1]['col2']);
+        $this->assertEquals(46, $result[2]['col2']);
     }
 
     /**
@@ -68,8 +68,7 @@ class TableDataGatewaySelectTest extends TableDataGatewayTestBase
     {
         $result = $this->gw->selectOne(array('col1' => 'text3'));
 
-        $this->assertEquals(1, count($result));
-        $this->assertEquals(44, $result->get(3, 'col2'));
+        $this->assertEquals(44, $result['col2']);
     }
 
     /**
@@ -79,7 +78,7 @@ class TableDataGatewaySelectTest extends TableDataGatewayTestBase
     {
         $result = $this->gw->selectOne(array('col1' => 'text3'));
 
-        $this->assertType(PHPUnit_Framework_Constraint_IsType::TYPE_INT, $result->get(3, 'col2'));
+        $this->assertType(PHPUnit_Framework_Constraint_IsType::TYPE_INT, $result['col2']);
     }
 
     /**
@@ -89,7 +88,7 @@ class TableDataGatewaySelectTest extends TableDataGatewayTestBase
     {
         $result = $this->gw->selectOne(array('col1' => 'text3'));
 
-        $this->assertType(PHPUnit_Framework_Constraint_IsType::TYPE_BOOL, $result->get(3, 'col3'));
+        $this->assertType(PHPUnit_Framework_Constraint_IsType::TYPE_BOOL, $result['col3']);
     }
 
     /**
@@ -102,7 +101,7 @@ class TableDataGatewaySelectTest extends TableDataGatewayTestBase
     {
         $result = $this->gw->selectOne(array('col1' => 'nonsense'));
 
-        $this->assertEquals(0, count($result));
+        $this->assertFalse($result);
     }
 
     /**

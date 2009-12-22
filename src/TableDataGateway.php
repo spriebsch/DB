@@ -99,7 +99,7 @@ class TableDataGateway
         $this->idColumn = $idColumn;
         $this->dbTypes  = $dbTypes;
 	}
-
+	
     protected function fixTypes($record)
     {
         $result = array();
@@ -246,7 +246,7 @@ class TableDataGateway
         	throw new DatabaseException('Record ID "' . $id . '" not found');
         }
 
-        return new RecordSet($this, array($this->fixTypes($result)));        
+        return $this->fixTypes($result);        
 	}
 
     /**
@@ -283,12 +283,12 @@ class TableDataGateway
 
             // When query has no result, return empty recordset.
             if ($result === false) {
-                return new RecordSet($this, array());
+                return false;
             } 
 
-            return new RecordSet($this, array($this->fixTypes($result)));        
+            return $this->fixTypes($result);        
         } else {
-            return new RecordSet($this, array_map(array($this, 'fixTypes'), $statement->fetchAll(PDO::FETCH_ASSOC)));
+            return array_map(array($this, 'fixTypes'), $statement->fetchAll(PDO::FETCH_ASSOC));
         }
     }
 
@@ -410,7 +410,7 @@ class TableDataGateway
             throw new DatabaseException('FindAll failed on table "' . $this->table . '": ' . $message[2]);
         }
 
-        return new RecordSet($this, array_map(array($this, 'fixTypes'), $statement->fetchAll(\PDO::FETCH_ASSOC)));        
+        return array_map(array($this, 'fixTypes'), $statement->fetchAll(\PDO::FETCH_ASSOC));        
     }
 
     /**
