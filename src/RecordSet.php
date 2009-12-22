@@ -148,7 +148,7 @@ class RecordSet implements \Countable
 	    }
 
 	    if (!isset($this->records[$id][$column])) {
-           throw new RecordSetException('Column "' . $column . '" does not exist');
+           return null;
 	    }
 
         return $this->records[$id][$column];
