@@ -122,11 +122,10 @@ class RecordSetTest extends PHPUnit_Framework_TestCase
 
     /**
      * @covers spriebsch\DB\RecordSet
-     * @expectedException spriebsch\DB\RecordSetException
      */
-    public function testGetThrowsExceptionForNonColumn()
+    public function testGetReturnsNullForNonColumn()
     {
-        $this->rs->get(1, 'nonsense');
+        $this->assertNull($this->rs->get(1, 'nonsense'));
     }
     
     public function testSetChangesValue()
