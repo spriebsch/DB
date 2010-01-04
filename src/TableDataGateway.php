@@ -69,7 +69,7 @@ class TableDataGateway
 	 * @var string
 	 */
 	protected $idColumn;
-	
+
 	/**
 	 * Database type map containing the PDO types for each column.
 	 *
@@ -83,6 +83,8 @@ class TableDataGateway
      * @var array
      */	
 	protected $statements = array();
+	
+	protected $criterionPostfix = '_CRITERION';
 
     /**
      * Constructs the object.
@@ -100,7 +102,7 @@ class TableDataGateway
         $this->dbTypes  = $dbTypes;
 	}
 	
-    protected function fixTypes($record)
+    protected function fixTypes(array $record)
     {
         $result = array();
          
@@ -139,7 +141,11 @@ class TableDataGateway
      */	
 	protected function getType($column)
 	{
-	    if (!isset($this->dbTypes[$column])) {
+		if (substr($column, -strlen($this->criterionPostfix)) == $this->criterionPostfix) {
+			$column = substr($column, 0, -strlen($this->criterionPostfix));
+		}
+		
+		if (!isset($this->dbTypes[$column])) {
 	        throw new DatabaseException('No type for column "' . $column . '"');
 	    }
 	    
@@ -241,7 +247,7 @@ class TableDataGateway
         }        
 
         $result = $statement->fetch(\PDO::FETCH_ASSOC);
-        
+
         if ($result === false) {
         	throw new DatabaseException('Record ID "' . $id . '" not found');
         }
@@ -302,7 +308,7 @@ class TableDataGateway
     {
         return $this->select($criteria, true);
     }
-
+    
     /**
      * Updates a row.
      * Returns the number of updated records.
@@ -313,17 +319,10 @@ class TableDataGateway
      * @throws InvalidArgumentException Record has no ID column
      * @throws InvalidArgumentException ID is not an integer
      * @throws spriebsch\DB\DatabaseException Update ID failed on table
+     * @todo make sure it works when criteria and record share column names
      */
-	public function update(array $record)
+	public function update(array $record, array $criteria = array())
 	{
-        if (!isset($record[$this->idColumn])) {
-            throw new InvalidArgumentException('Record has no ID column "' . $this->idColumn . '"');
-        }
-
-        if (!is_int($record[$this->idColumn])) {
-            throw new InvalidArgumentException('ID "' . $record[$this->idColumn] . '" is not an integer');
-        }
-
         $sql = 'UPDATE ' . $this->table . ' SET ';
         $fields = array();
 
@@ -335,11 +334,29 @@ class TableDataGateway
         foreach (array_keys($data) as $key) {
             $fields[] = $key . '=:' . $key;           
         }
-    
-        $sql .= implode(',', $fields) . ' WHERE ' . $this->idColumn . '=:' . $this->idColumn . ';';
+
+        $sql .= implode(',', $fields);
+
+        $fields = array();
+
+        // Criteria get a postfix to avoid problems with column names
+        // that appear in the data and in the criteria.
+
+        foreach (array_keys($criteria) as $key) {
+            $fields[] = $key . '=:' . $key . $this->criterionPostfix;           
+        }
+
+        $sql .= ' WHERE ' . implode(' AND ', $fields);
 
         $statement = $this->prepare($sql);
         $this->bindParameters($statement, $record);
+
+        $tmp = array();
+        foreach ($criteria as $key => $value) {
+        	$tmp[$key . $this->criterionPostfix] = $value;
+        }
+
+        $this->bindParameters($statement, $tmp);
         $statement->execute();
 
         if ($statement->errorCode() != 0) {

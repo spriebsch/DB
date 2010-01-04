@@ -47,28 +47,6 @@ namespace spriebsch\DB;
 class TableDataGatewayUpdateTest extends TableDataGatewayTestBase
 {
 	/**
-	 * Make sure record to update contains an ID column.
-	 *
-	 * @covers spriebsch\DB\TableDataGateway
-	 * @expectedException InvalidArgumentException
-	 */
-    public function testUpdateThrowsExceptionWhenRecordDoesNotContainId()
-    {
-        $result = $this->gw->update(array());
-    }    
-
-	/**
-	 * Make sure an exception is thrown when ID is not an integer.
-	 *
-	 * @covers spriebsch\DB\TableDataGateway
-	 * @expectedException InvalidArgumentException
-	 */
-    public function testUpdateThrowsExceptionWhenIdIsNotAnInteger()
-    {
-        $result = $this->gw->update(array('id' => 'non-integer'));
-    }    
-
-	/**
 	 * Make sure an exception is thrown when there is no type information
 	 * for a database column. col99 exists in the database (so preparing the
 	 * statement still works) but there is no type information for it.
@@ -88,7 +66,7 @@ class TableDataGatewayUpdateTest extends TableDataGatewayTestBase
 	 */
     public function testUpdateReturnsTrueOnSuccess()
     {
-        $result = $this->gw->update(array('id' => 1, 'col1' => 'new', 'col2' => 3));
+        $result = $this->gw->update(array('col1' => 'new', 'col2' => 3), array('id' => 1));
 
         $this->assertEquals(1, $result);
     }    
@@ -100,7 +78,7 @@ class TableDataGatewayUpdateTest extends TableDataGatewayTestBase
 	 */
     public function testUpdateReturnsFalseOnFailure()
     {
-        $result = $this->gw->update(array('id' => 99, 'col1' => 'new', 'col2' => 3));
+        $result = $this->gw->update(array('col1' => 'new', 'col2' => 3), array('id' => 99));
 
         $this->assertEquals(0, $result);
     }
